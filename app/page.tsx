@@ -16,12 +16,12 @@ async function getDashboardData() {
     .single()
 
   const totalCalls = calls?.length ?? 0
-  const successfulCalls = calls?.filter((c) => c.call_successful === true).length ?? 0
-  const bookedCalls = calls?.filter((c) => c.appointment_booked === true).length ?? 0
+  const resolvedCalls = calls?.filter((c) => c.call_successful === true).length ?? 0
+  const bookedCalls = calls?.filter((c) => c.appointment_booked_ai === true).length ?? 0
   const estimatedRevenue = bookedCalls * (clinic?.avg_booking_value ?? 135)
-  const recentCalls = calls?.slice(0, 8) ?? []
+  const recentCalls = calls?.slice(0, 10) ?? []
 
-  return { totalCalls, successfulCalls, bookedCalls, estimatedRevenue, recentCalls, clinic }
+  return { totalCalls, resolvedCalls, bookedCalls, estimatedRevenue, recentCalls, clinic }
 }
 
 function formatTime(ms: number) {
@@ -37,8 +37,20 @@ function formatDate(ts: number) {
   })
 }
 
+function classifyCall(call: any) {
+  if (call.emergency_call === true) return { label: '🚨 Emergency', cls: 'emergency' }
+  if (call.high_value_lead_ai === true) return { label: '💜 High Value Lead', cls: 'high-value' }
+  if (call.appointment_booked_ai === true) return { label: '✅ Booked', cls: 'booked' }
+  if (call.callback_requested === true) return { label: '📞 Callback Needed', cls: 'callback' }
+  if (call.faq_only === true) return { label: '💬 FAQ', cls: 'faq' }
+  if (call.wrong_number === true) return { label: 'Wrong Number', cls: 'unknown' }
+  if (call.call_successful === true) return { label: 'Resolved', cls: 'success' }
+  if (call.call_successful === false) return { label: 'Missed', cls: 'missed' }
+  return { label: 'Unclassified', cls: 'unknown' }
+}
+
 export default async function Dashboard() {
-  const { totalCalls, successfulCalls, bookedCalls, estimatedRevenue, recentCalls, clinic } = await getDashboardData()
+  const { totalCalls, resolvedCalls, bookedCalls, estimatedRevenue, recentCalls, clinic } = await getDashboardData()
 
   return (
     <main className="dashboard">
@@ -61,7 +73,7 @@ export default async function Dashboard() {
         </div>
         <div className="kpi-card">
           <p className="kpi-label">Calls Resolved</p>
-          <p className="kpi-value">{successfulCalls}</p>
+          <p className="kpi-value">{resolvedCalls}</p>
           <p className="kpi-sub">Completed calls</p>
         </div>
         <div className="kpi-card">
@@ -72,7 +84,7 @@ export default async function Dashboard() {
         <div className="kpi-card">
           <p className="kpi-label">Est. Revenue</p>
           <p className="kpi-value accent">£{estimatedRevenue.toLocaleString()}</p>
-          <p className="kpi-sub">At £{clinic?.avg_booking_value ?? 135} avg</p>
+          <p className="kpi-sub">{bookedCalls} bookings × £{clinic?.avg_booking_value ?? 135}</p>
         </div>
       </div>
 
@@ -100,8 +112,8 @@ export default async function Dashboard() {
                   <span>{formatDate(call.started_at)}</span>
                 </div>
               </div>
-              <span className={`badge ${call.call_successful === true ? 'success' : call.call_successful === false ? 'missed' : 'unknown'}`}>
-                {call.call_successful === true ? 'Resolved' : call.call_successful === false ? 'Missed' : 'Unclassified'}
+              <span className={`badge ${classifyCall(call).cls}`}>
+                {classifyCall(call).label}
               </span>
             </div>
           ))

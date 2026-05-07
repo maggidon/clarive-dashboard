@@ -161,6 +161,7 @@ body {
   gap: 16px;
   align-items: center;
   transition: background 0.15s;
+  cursor: pointer;
 }
 
 .call-row:last-child {
@@ -168,7 +169,7 @@ body {
 }
 
 .call-row:hover {
-  background: rgba(124, 58, 237, 0.04);
+  background: rgba(124, 58, 237, 0.06);
 }
 
 .call-summary {
@@ -222,6 +223,36 @@ body {
   background: rgba(168, 85, 247, 0.08);
   color: #a855f7;
   border: 1px solid rgba(168, 85, 247, 0.15);
+}
+
+.badge.emergency {
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
+.badge.high-value {
+  background: rgba(168, 85, 247, 0.12);
+  color: #a855f7;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+.badge.booked {
+  background: rgba(74, 222, 128, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.badge.callback {
+  background: rgba(251, 191, 36, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+.badge.faq {
+  background: rgba(96, 165, 250, 0.12);
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.25);
 }
 
 .empty-state {
