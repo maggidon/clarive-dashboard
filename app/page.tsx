@@ -1,7 +1,29 @@
-import { supabase } from './lib/supabase'
+import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
+import { createServerClient } from '@supabase/ssr'
 import Dashboard from './components/Dashboard'
 
-async function getData() {
+export default async function Page() {
+  const cookieStore = await cookies()
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return cookieStore.getAll() },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
   const clinicId = 'pinehurst_dental'
 
   const { data: calls } = await supabase
@@ -16,10 +38,5 @@ async function getData() {
     .eq('id', clinicId)
     .single()
 
-  return { calls: calls ?? [], clinic }
-}
-
-export default async function Page() {
-  const { calls, clinic } = await getData()
-  return <Dashboard calls={calls} clinic={clinic} />
+  return <Dashboard calls={calls ?? []} clinic={clinic} />
 }

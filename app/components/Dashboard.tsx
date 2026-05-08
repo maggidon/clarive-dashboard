@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { createBrowserSupabaseClient } from '../lib/supabase'
 
 const SUBMARK = `M34.4958 0.0112218H34.4509C15.3486 0.0112218 0 15.6376 0 34.406C0 35.0092 0.0224436 35.6067 0.0589144 36.2071C6.56755 33.4999 11.7127 32.4282 17.9941 31.5304L18.0671 31.6062C12.8714 35.0288 6.27579 41.4449 3.31043 49.9482C5.95036 54.8072 9.05599 58.5385 13.0594 61.5459C13.8814 45.8915 26.6293 30.1249 45.2659 26.7303L45.2379 26.6125H3.54889C8.43598 18.3196 16.4343 12.4169 27.5804 12.4169C41.5515 12.4169 52.7508 23.7874 52.7508 37.997C52.7508 51.8391 40.968 65.179 25.2462 64.9938C21.7198 64.9489 19.1332 64.5478 15.4019 63.2011C21.097 67.2831 26.8089 68.9579 33.8758 68.9579C52.4787 68.9579 69 53.7075 69 34.2826C69 15.5282 53.3119 0 34.521 0L34.4958 0.0112218Z`
 
@@ -47,6 +48,13 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
   const [callFilter, setCallFilter] = useState('all')
   const [selectedCall, setSelectedCall] = useState<any>(null)
   const [now] = useState(() => Date.now())
+
+  const supabaseClient = createBrowserSupabaseClient()
+
+  async function handleLogout() {
+    await supabaseClient.auth.signOut()
+    window.location.href = '/login'
+  }
 
   const dateMs: Record<string, number> = {
     'Today': 86400000,
@@ -114,7 +122,7 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
             {clinic?.name ?? 'Dashboard'}
           </div>
           <button className="db-nav-btn">Settings</button>
-          <button className="db-nav-btn logout">Log out</button>
+          <button className="db-nav-btn logout" onClick={handleLogout}>Log out</button>
         </div>
       </nav>
 
@@ -128,16 +136,6 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
               onClick={() => setDateFilter(f)}
             >{f}</button>
           ))}
-          <div className="db-divider" />
-          <select
-            className="db-filter-dropdown"
-            value={callFilter}
-            onChange={e => setCallFilter(e.target.value)}
-          >
-            {CALL_FILTERS.map(f => (
-              <option key={f.key} value={f.key}>{f.label}</option>
-            ))}
-          </select>
         </div>
       </div>
 
