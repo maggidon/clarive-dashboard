@@ -345,3 +345,96 @@ body {
 .flag-yellow { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
 .flag-blue { background: rgba(96,165,250,0.1); color: #60a5fa; border: 1px solid rgba(96,165,250,0.2); }
 .flag-gray { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.08); }
+
+/* ─── MOBILE RESPONSIVE ─────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+
+  /* Nav — hide text nav links, keep logo + right side */
+  .db-topnav {
+    padding: 0 16px;
+    height: 52px;
+  }
+  .db-logo { margin-right: 0; }
+  .db-navlink { display: none; }
+  .db-clinic-pill { display: none; }
+  .db-nav-btn { padding: 5px 10px; font-size: 11px; }
+
+  /* Subnav — stack title and filters */
+  .db-subnav {
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .db-page-title { font-size: 18px; }
+  .db-controls { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+  .db-btn { padding: 5px 11px; font-size: 11px; }
+
+  /* Content padding */
+  .db-content { padding: 14px 16px; gap: 12px; }
+
+  /* KPI cards — 2 column grid */
+  .db-kpis {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  /* Est. Revenue spans full width */
+  .db-kpi:last-child { grid-column: 1 / -1; }
+
+  .db-kpi { padding: 14px 16px; border-radius: 12px; }
+  .db-kpi-val { font-size: 26px; }
+  .db-kpi-label { font-size: 10px; margin-bottom: 8px; }
+  .db-kpi-sub { font-size: 11px; }
+
+  /* Main grid — single column, right panel goes below */
+  .db-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Call panel tabs — scrollable row */
+  .db-panel-head {
+    padding: 12px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .db-tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .db-tabs::-webkit-scrollbar { display: none; }
+  .db-tab { flex-shrink: 0; }
+
+  /* Call rows */
+  .db-call { padding: 12px 14px; gap: 10px; }
+  .db-call-sum { font-size: 12px; }
+  .db-call-met { font-size: 11px; }
+
+  /* Badge — hide on very small screens to avoid overflow */
+  .db-badge { font-size: 10px; padding: 3px 8px; }
+
+  /* Right panel cards */
+  .db-right { gap: 10px; }
+  .db-card { padding: 14px 16px; border-radius: 12px; }
+
+  /* Modal */
+  .db-modal {
+    max-height: 92vh;
+    border-radius: 14px;
+  }
+  .db-modal-head { padding: 18px 18px 14px; }
+  .db-modal-body { padding: 16px 18px; gap: 14px; }
+  .db-modal-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .db-modal-title { font-size: 15px; }
+}
+
+/* Very small phones */
+@media (max-width: 390px) {
+  .db-kpis { grid-template-columns: 1fr 1fr; }
+  .db-kpi-val { font-size: 22px; }
+  .db-nav-btn.logout { display: none; }
+}
