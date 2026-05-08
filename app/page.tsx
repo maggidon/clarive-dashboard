@@ -1,12 +1,13 @@
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
+import { supabase } from './lib/supabase'
 import Dashboard from './components/Dashboard'
 
 export default async function Page() {
   const cookieStore = await cookies()
 
-  const supabase = createServerClient(
+  const authClient = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -21,7 +22,7 @@ export default async function Page() {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await authClient.auth.getUser()
   if (!user) redirect('/login')
 
   const clinicId = 'pinehurst_dental'
