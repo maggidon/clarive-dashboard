@@ -112,9 +112,9 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
           <span className="db-logo-text">CLARIVE AI</span>
         </div>
         <a className="db-navlink active" href="#">Overview</a>
-        <a className="db-navlink" href="#">Calls</a>
-        <a className="db-navlink" href="#">Recoveries</a>
-        <a className="db-navlink" href="#">Reports</a>
+        <a className="db-navlink" href="/calls">Calls</a>
+        <a className="db-navlink" href="/recoveries">Recoveries</a>
+        <a className="db-navlink" href="/reports">Reports</a>
         <div className="db-spacer" />
         <div className="db-nav-right">
           <div className="db-clinic-pill">
