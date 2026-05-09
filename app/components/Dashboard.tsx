@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { createBrowserSupabaseClient } from '../lib/supabase'
 
 const SUBMARK = `M34.4958 0.0112218H34.4509C15.3486 0.0112218 0 15.6376 0 34.406C0 35.0092 0.0224436 35.6067 0.0589144 36.2071C6.56755 33.4999 11.7127 32.4282 17.9941 31.5304L18.0671 31.6062C12.8714 35.0288 6.27579 41.4449 3.31043 49.9482C5.95036 54.8072 9.05599 58.5385 13.0594 61.5459C13.8814 45.8915 26.6293 30.1249 45.2659 26.7303L45.2379 26.6125H3.54889C8.43598 18.3196 16.4343 12.4169 27.5804 12.4169C41.5515 12.4169 52.7508 23.7874 52.7508 37.997C52.7508 51.8391 40.968 65.179 25.2462 64.9938C21.7198 64.9489 19.1332 64.5478 15.4019 63.2011C21.097 67.2831 26.8089 68.9579 33.8758 68.9579C52.4787 68.9579 69 53.7075 69 34.2826C69 15.5282 53.3119 0 34.521 0L34.4958 0.0112218Z`
@@ -19,6 +20,7 @@ function formatDate(ts: number) {
 }
 
 function classifyCall(call: any) {
+  if (call.direction === 'outbound') return { label: '🔄 Recovery Call', cls: 'recovery', filter: 'recovery' }
   if (call.emergency_call === true) return { label: '🚨 Emergency', cls: 'emergency', filter: 'emergency' }
   if (call.high_value_lead_ai === true) return { label: '💜 High Value Lead', cls: 'high-value', filter: 'highvalue' }
   if (call.appointment_booked_ai === true) return { label: '✅ Booked', cls: 'booked', filter: 'booked' }
@@ -41,9 +43,11 @@ const CALL_FILTERS = [
   { key: 'callback', label: '📞 Callback' },
   { key: 'resolved', label: 'Resolved' },
   { key: 'missed', label: 'Missed' },
+  { key: 'recovery', label: '🔄 Recovery' },
 ]
 
 export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any }) {
+  const pathname = usePathname()
   const [dateFilter, setDateFilter] = useState('All time')
   const [callFilter, setCallFilter] = useState('all')
   const [selectedCall, setSelectedCall] = useState<any>(null)
@@ -73,10 +77,10 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
     return passDate && passType
   })
 
-  const totalCalls = filteredCalls.length
-  const resolvedCalls = filteredCalls.filter(c => c.call_successful === true).length
+  const totalCalls = filteredCalls.filter(c => c.direction !== 'outbound').length
+  const resolvedCalls = filteredCalls.filter(c => c.call_successful === true && c.direction !== 'outbound').length
   const emergencyCalls = filteredCalls.filter(c => c.emergency_call === true).length
-  const bookedCalls = filteredCalls.filter(c => c.appointment_booked_ai === true).length
+  const bookedCalls = calls.filter(c => c.appointment_booked_ai === true).length
   const estimatedRevenue = bookedCalls * (clinic?.avg_booking_value ?? 135)
 
   const barCounts = [0,1,2,3,4,5,6].map(i => {
@@ -85,7 +89,7 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
     const dayEnd = new Date(dayStart.getTime() + 86400000)
     return calls.filter(c => {
       const t = c.started_at ?? new Date(c.created_at).getTime()
-      return t >= dayStart.getTime() && t < dayEnd.getTime()
+      return t >= dayStart.getTime() && t < dayEnd.getTime() && c.direction !== 'outbound'
     }).length
   })
   const maxBar = Math.max(...barCounts, 1)
@@ -99,6 +103,7 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
     { label: 'Emergency', color: '#f87171', count: calls.filter(c => classifyCall(c).filter === 'emergency').length },
     { label: 'Booked', color: '#a855f7', count: calls.filter(c => classifyCall(c).filter === 'booked').length },
     { label: 'Missed', color: '#fbbf24', count: calls.filter(c => classifyCall(c).filter === 'missed').length },
+    { label: 'Recovery', color: '#22d3ee', count: calls.filter(c => classifyCall(c).filter === 'recovery').length },
   ].filter(b => b.count > 0)
   const maxBreakdown = Math.max(...breakdown.map(b => b.count), 1)
 
@@ -111,10 +116,10 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
           </svg>
           <span className="db-logo-text">CLARIVE AI</span>
         </div>
-        <a className="db-navlink active" href="#">Overview</a>
-        <a className="db-navlink" href="/calls">Calls</a>
-        <a className="db-navlink" href="/recoveries">Recoveries</a>
-        <a className="db-navlink" href="/reports">Reports</a>
+        <a className={`db-navlink ${pathname === '/' ? 'active' : ''}`} href="/">Overview</a>
+        <a className={`db-navlink ${pathname === '/calls' ? 'active' : ''}`} href="/calls">Calls</a>
+        <a className={`db-navlink ${pathname === '/recoveries' ? 'active' : ''}`} href="/recoveries">Recoveries</a>
+        <a className={`db-navlink ${pathname === '/reports' ? 'active' : ''}`} href="/reports">Reports</a>
         <div className="db-spacer" />
         <div className="db-nav-right">
           <div className="db-clinic-pill">
@@ -190,7 +195,7 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
                 return (
                   <div key={call.id} className="db-call" onClick={() => setSelectedCall(call)}>
                     <div className={`db-call-ico ico-${c.cls}`}>
-                      {c.cls === 'emergency' ? '🚨' : c.cls === 'faq' ? '💬' : c.cls === 'booked' ? '✅' : c.cls === 'high-value' ? '💜' : c.cls === 'callback' ? '📞' : c.cls === 'missed' ? '✕' : '✓'}
+                      {c.cls === 'emergency' ? '🚨' : c.cls === 'faq' ? '💬' : c.cls === 'booked' ? '✅' : c.cls === 'high-value' ? '💜' : c.cls === 'callback' ? '📞' : c.cls === 'missed' ? '✕' : c.cls === 'recovery' ? '🔄' : '✓'}
                     </div>
                     <div className="db-call-body">
                       <div className="db-call-sum">{call.call_summary ?? 'No summary available'}</div>
