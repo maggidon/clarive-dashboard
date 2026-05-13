@@ -3,6 +3,10 @@
 import { useState, useMemo } from 'react'
 import { usePathname } from 'next/navigation'
 import { createBrowserSupabaseClient } from '../lib/supabase'
+import {
+  AlertCircle, Star, CalendarCheck, PhoneCall, MessageCircle,
+  RefreshCw, PhoneMissed, PhoneIncoming, PhoneOff, HelpCircle
+} from 'lucide-react'
 
 const SUBMARK = `M34.4958 0.0112218H34.4509C15.3486 0.0112218 0 15.6376 0 34.406C0 35.0092 0.0224436 35.6067 0.0589144 36.2071C6.56755 33.4999 11.7127 32.4282 17.9941 31.5304L18.0671 31.6062C12.8714 35.0288 6.27579 41.4449 3.31043 49.9482C5.95036 54.8072 9.05599 58.5385 13.0594 61.5459C13.8814 45.8915 26.6293 30.1249 45.2659 26.7303L45.2379 26.6125H3.54889C8.43598 18.3196 16.4343 12.4169 27.5804 12.4169C41.5515 12.4169 52.7508 23.7874 52.7508 37.997C52.7508 51.8391 40.968 65.179 25.2462 64.9938C21.7198 64.9489 19.1332 64.5478 15.4019 63.2011C21.097 67.2831 26.8089 68.9579 33.8758 68.9579C52.4787 68.9579 69 53.7075 69 34.2826C69 15.5282 53.3119 0 34.521 0L34.4958 0.0112218Z`
 
@@ -22,31 +26,52 @@ function formatDate(ts: number) {
 }
 
 function classifyCall(call: any) {
-  if (call.direction === 'outbound') return { label: '🔄 Recovery Call', cls: 'recovery', filter: 'recovery' }
-  if (call.emergency_call === true) return { label: '🚨 Emergency', cls: 'emergency', filter: 'emergency' }
-  if (call.high_value_lead_ai === true) return { label: '💜 High Value Lead', cls: 'high-value', filter: 'highvalue' }
-  if (call.appointment_booked_ai === true) return { label: '✅ Booked', cls: 'booked', filter: 'booked' }
-  if (call.callback_requested === true) return { label: '📞 Callback Needed', cls: 'callback', filter: 'callback' }
-  if (call.faq_only === true) return { label: '💬 FAQ', cls: 'faq', filter: 'faq' }
+  if (call.direction === 'outbound') return { label: 'Recovery Call', cls: 'recovery', filter: 'recovery' }
+  if (call.emergency_call === true) return { label: 'Emergency', cls: 'emergency', filter: 'emergency' }
+  if (call.high_value_lead_ai === true) return { label: 'High Value Lead', cls: 'high-value', filter: 'highvalue' }
+  if (call.appointment_booked_ai === true) return { label: 'Booked', cls: 'booked', filter: 'booked' }
+  if (call.callback_requested === true) return { label: 'Callback Needed', cls: 'callback', filter: 'callback' }
+  if (call.faq_only === true) return { label: 'FAQ', cls: 'faq', filter: 'faq' }
   if (call.wrong_number === true) return { label: 'Wrong Number', cls: 'unknown', filter: 'other' }
   if (call.call_successful === true) return { label: 'Resolved', cls: 'success', filter: 'resolved' }
   if (call.call_successful === false) return { label: 'Missed', cls: 'missed', filter: 'missed' }
   return { label: 'Unclassified', cls: 'unknown', filter: 'other' }
 }
 
+function CallIcon({ cls }: { cls: string }) {
+  const size = 15
+  if (cls === 'emergency') return <AlertCircle size={size} color="#f87171" />
+  if (cls === 'high-value') return <Star size={size} color="#a855f7" />
+  if (cls === 'booked') return <CalendarCheck size={size} color="#4ade80" />
+  if (cls === 'callback') return <PhoneCall size={size} color="#fbbf24" />
+  if (cls === 'faq') return <MessageCircle size={size} color="#60a5fa" />
+  if (cls === 'recovery') return <RefreshCw size={size} color="#22d3ee" />
+  if (cls === 'missed') return <PhoneMissed size={size} color="#f87171" />
+  if (cls === 'success') return <PhoneIncoming size={size} color="#4ade80" />
+  if (cls === 'unknown') return <HelpCircle size={size} color="#94a3b8" />
+  return <PhoneIncoming size={size} color="#94a3b8" />
+}
+
 const CALL_FILTERS = [
   { key: 'all', label: 'All' },
-  { key: 'emergency', label: '🚨 Emergency' },
-  { key: 'booked', label: '✅ Booked' },
-  { key: 'highvalue', label: '💜 High Value' },
-  { key: 'faq', label: '💬 FAQ' },
-  { key: 'callback', label: '📞 Callback' },
+  { key: 'emergency', label: 'Emergency' },
+  { key: 'booked', label: 'Booked' },
+  { key: 'highvalue', label: 'High Value' },
+  { key: 'faq', label: 'FAQ' },
+  { key: 'callback', label: 'Callback' },
   { key: 'resolved', label: 'Resolved' },
   { key: 'missed', label: 'Missed' },
-  { key: 'recovery', label: '🔄 Recovery' },
+  { key: 'recovery', label: 'Recovery' },
 ]
 
 const DATE_FILTERS = ['Today', '7 days', '28 days', 'All time']
+
+const DATE_MS: Record<string, number> = {
+  'Today': 86400000,
+  '7 days': 7 * 86400000,
+  '28 days': 28 * 86400000,
+  'All time': Infinity,
+}
 
 export default function CallsClient({ calls, clinic }: { calls: any[], clinic: any }) {
   const pathname = usePathname()
@@ -64,15 +89,8 @@ export default function CallsClient({ calls, clinic }: { calls: any[], clinic: a
     window.location.href = '/login'
   }
 
-  const dateMs: Record<string, number> = {
-    'Today': 86400000,
-    '7 days': 7 * 86400000,
-    '28 days': 28 * 86400000,
-    'All time': Infinity,
-  }
-
   const filteredCalls = useMemo(() => {
-    const dateCutoff = now - (dateMs[dateFilter] ?? Infinity)
+    const dateCutoff = now - (DATE_MS[dateFilter] ?? Infinity)
     return calls.filter(c => {
       const ts = c.started_at ?? (c.created_at ? new Date(c.created_at).getTime() : 0)
       const passDate = dateFilter === 'All time' || ts >= dateCutoff
@@ -88,20 +106,9 @@ export default function CallsClient({ calls, clinic }: { calls: any[], clinic: a
   const totalPages = Math.ceil(filteredCalls.length / PAGE_SIZE)
   const paginated = filteredCalls.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
-  function handleFilterChange(key: string) {
-    setCallFilter(key)
-    setPage(1)
-  }
-
-  function handleDateChange(f: string) {
-    setDateFilter(f)
-    setPage(1)
-  }
-
-  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
-    setSearch(e.target.value)
-    setPage(1)
-  }
+  function handleFilterChange(key: string) { setCallFilter(key); setPage(1) }
+  function handleDateChange(f: string) { setDateFilter(f); setPage(1) }
+  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) { setSearch(e.target.value); setPage(1) }
 
   return (
     <div className="db-root">
@@ -172,7 +179,7 @@ export default function CallsClient({ calls, clinic }: { calls: any[], clinic: a
               return (
                 <div key={call.id} className="db-call" onClick={() => setSelectedCall(call)}>
                   <div className={`db-call-ico ico-${c.cls}`}>
-                    {c.cls === 'emergency' ? '🚨' : c.cls === 'faq' ? '💬' : c.cls === 'booked' ? '✅' : c.cls === 'high-value' ? '💜' : c.cls === 'callback' ? '📞' : c.cls === 'missed' ? '✕' : c.cls === 'recovery' ? '🔄' : '✓'}
+                    <CallIcon cls={c.cls} />
                   </div>
                   <div className="db-call-body">
                     <div className="db-call-sum">{call.call_summary ?? 'No summary available'}</div>
@@ -192,17 +199,9 @@ export default function CallsClient({ calls, clinic }: { calls: any[], clinic: a
 
         {totalPages > 1 && (
           <div className="calls-pagination">
-            <button
-              className="db-btn"
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={page === 1}
-            >← Previous</button>
+            <button className="db-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>← Previous</button>
             <span className="calls-page-info">Page {page} of {totalPages}</span>
-            <button
-              className="db-btn"
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-            >Next →</button>
+            <button className="db-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>Next →</button>
           </div>
         )}
       </div>
@@ -237,14 +236,14 @@ export default function CallsClient({ calls, clinic }: { calls: any[], clinic: a
                 </div>
               )}
               <div className="db-modal-flags">
-                {selectedCall.emergency_call && <span className="db-flag flag-red">🚨 Emergency</span>}
-                {selectedCall.high_value_lead_ai && <span className="db-flag flag-purple">💜 High Value Lead</span>}
-                {selectedCall.appointment_booked_ai && <span className="db-flag flag-green">✅ Appointment Booked</span>}
-                {selectedCall.callback_requested && <span className="db-flag flag-yellow">📞 Callback Requested</span>}
-                {selectedCall.faq_only && <span className="db-flag flag-blue">💬 FAQ Only</span>}
-                {selectedCall.new_patient && <span className="db-flag flag-blue">👤 New Patient</span>}
+                {selectedCall.emergency_call && <span className="db-flag flag-red">Emergency</span>}
+                {selectedCall.high_value_lead_ai && <span className="db-flag flag-purple">High Value Lead</span>}
+                {selectedCall.appointment_booked_ai && <span className="db-flag flag-green">Appointment Booked</span>}
+                {selectedCall.callback_requested && <span className="db-flag flag-yellow">Callback Requested</span>}
+                {selectedCall.faq_only && <span className="db-flag flag-blue">FAQ Only</span>}
+                {selectedCall.new_patient && <span className="db-flag flag-blue">New Patient</span>}
                 {selectedCall.wrong_number && <span className="db-flag flag-gray">Wrong Number</span>}
-                {selectedCall.complaint && <span className="db-flag flag-red">⚠️ Complaint</span>}
+                {selectedCall.complaint && <span className="db-flag flag-red">Complaint</span>}
               </div>
             </div>
           </div>
