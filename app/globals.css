@@ -511,7 +511,7 @@ body {
 
 /* ─── REPORTS PAGE ─────────────────────────────────────────── */
 
-.rep-content { max-width: 900px; }
+.rep-content { max-width: 100%s; }
 
 .rep-month-label {
   font-size: 13px;
@@ -759,4 +759,29 @@ body {
   .rep-two-col { grid-template-columns: 1fr; }
   .rep-headline-val { font-size: 36px; }
   .rep-headline { padding: 24px 20px; }
+}
+
+.rep-narrative {
+  background: linear-gradient(135deg, #1a1525, #150f20);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 24px 28px;
+}
+
+.rep-narrative-para {
+  font-size: 14px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+.rep-narrative-para:last-child { margin-bottom: 0; }
+
+@media print {
+  .rep-narrative {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .rep-narrative-para { color: #334155; }
 }

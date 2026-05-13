@@ -30,6 +30,36 @@ function inRange(ts: string | number, start: Date, end: Date) {
   return t >= start.getTime() && t <= end.getTime()
 }
 
+function generateNarrative(
+  monthLabel: string,
+  clinicName: string,
+  totalCalls: number,
+  resolvedCalls: number,
+  missedCalls: number,
+  bookedCalls: number,
+  estimatedRevenue: number,
+  recoveryAttempts: number,
+  recoveryRate: number,
+  highValueCalls: number,
+  emergencyCalls: number,
+  complaints: number
+) {
+  const resRate = totalCalls ? Math.round(resolvedCalls / totalCalls * 100) : 0
+  const para1 = `During ${monthLabel}, Clara handled ${totalCalls} inbound patient calls on behalf of ${clinicName}. Of these, ${resolvedCalls} were successfully resolved (${resRate}% resolution rate), with ${missedCalls} calls not completing. Clara booked ${bookedCalls} appointments directly, generating an estimated ${formatCurrency(estimatedRevenue)} in captured revenue at the average booking value.`
+
+  const parts: string[] = []
+  if (recoveryAttempts > 0) parts.push(`The missed call recovery system triggered ${recoveryAttempts} outbound recovery calls, achieving a ${recoveryRate}% booking rate on those attempts.`)
+  if (highValueCalls > 0) parts.push(`${highValueCalls} high-value treatment ${highValueCalls === 1 ? 'enquiry was' : 'enquiries were'} detected and flagged for priority follow-up.`)
+  if (emergencyCalls > 0) parts.push(`${emergencyCalls} emergency ${emergencyCalls === 1 ? 'call was' : 'calls were'} identified and escalated during this period.`)
+  if (complaints > 0) {
+    parts.push(`${complaints} complaint${complaints > 1 ? 's were' : ' was'} logged and should be reviewed with the practice manager.`)
+  } else {
+    parts.push(`No complaints were recorded this period.`)
+  }
+
+  return [para1, parts.join(' ')]
+}
+
 export default function ReportsClient({ calls, recoveries, clinic }: {
   calls: any[]
   recoveries: any[]
@@ -77,7 +107,23 @@ export default function ReportsClient({ calls, recoveries, clinic }: {
     ? Math.round(outboundCalls.filter(c => c.appointment_booked_ai === true).length / monthRecoveries.length * 100)
     : 0
 
-  // Weekly breakdown
+  const narrative = useMemo(() => generateNarrative(
+    getMonthLabel(monthOffset),
+    clinic?.name ?? 'the practice',
+    totalCalls,
+    resolvedCalls,
+    missedCalls,
+    bookedCalls,
+    estimatedRevenue,
+    monthRecoveries.length,
+    recoveryRate,
+    highValueCalls,
+    emergencyCalls,
+    complaints
+  ), [monthOffset, clinic, totalCalls, resolvedCalls, missedCalls, bookedCalls,
+      estimatedRevenue, monthRecoveries.length, recoveryRate, highValueCalls,
+      emergencyCalls, complaints])
+
   const weeklyData = useMemo(() => {
     const weeks: { week: string; calls: number; booked: number; missed: number }[] = []
     const startCopy = new Date(start)
@@ -102,7 +148,6 @@ export default function ReportsClient({ calls, recoveries, clinic }: {
     return weeks
   }, [inboundCalls, start, end])
 
-  // Call type breakdown
   const callTypes = [
     { label: 'Resolved', count: resolvedCalls, color: '#4ade80' },
     { label: 'Missed', count: missedCalls, color: '#f87171' },
@@ -153,7 +198,6 @@ export default function ReportsClient({ calls, recoveries, clinic }: {
 
       <div className="db-content rep-content">
 
-        {/* Print header — only shows when printing */}
         <div className="print-header">
           <div className="print-header-logo">CLARIVE AI</div>
           <div className="print-header-meta">
@@ -162,14 +206,19 @@ export default function ReportsClient({ calls, recoveries, clinic }: {
           </div>
         </div>
 
-        {/* Revenue headline */}
         <div className="rep-headline">
           <div className="rep-headline-val">{formatCurrency(estimatedRevenue)}</div>
           <div className="rep-headline-label">Estimated revenue captured by Clara</div>
           <div className="rep-headline-sub">{bookedCalls} appointments booked × {formatCurrency(avgBookingValue)} average booking value</div>
         </div>
 
-        {/* KPI grid */}
+        <div className="rep-narrative">
+          <div className="rep-section-title">Monthly Performance Summary</div>
+          {narrative.map((para, i) => (
+            <p key={i} className="rep-narrative-para">{para}</p>
+          ))}
+        </div>
+
         <div className="rep-kpi-grid">
           <div className="rep-kpi">
             <div className="rep-kpi-icon"><Phone size={16} color="#a855f7" /></div>
@@ -213,7 +262,6 @@ export default function ReportsClient({ calls, recoveries, clinic }: {
           </div>
         </div>
 
-        {/* Weekly trend chart */}
         <div className="rep-section">
           <div className="rep-section-title">Weekly Call Volume</div>
           <div className="rep-chart">
@@ -234,7 +282,6 @@ export default function ReportsClient({ calls, recoveries, clinic }: {
           </div>
         </div>
 
-        {/* Call type breakdown */}
         <div className="rep-two-col">
           <div className="rep-section">
             <div className="rep-section-title">Call Type Breakdown</div>
@@ -283,7 +330,6 @@ export default function ReportsClient({ calls, recoveries, clinic }: {
           </div>
         </div>
 
-        {/* Print footer */}
         <div className="print-footer">
           <span>Generated by Clarive AI</span>
           <span>{clinic?.name} · {getMonthLabel(monthOffset)}</span>
