@@ -237,10 +237,10 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
             <div className="db-card">
               <div className="db-card-title">Clinic Details</div>
               <div className="db-info-row"><span className="db-info-key">Practice</span><span className="db-info-val">{clinic?.name}</span></div>
-              <div className="db-info-row"><span className="db-info-key">Address</span><span className="db-info-val">15b High Street</span></div>
-              <div className="db-info-row"><span className="db-info-key">City</span><span className="db-info-val">Belfast, BT2 5XZ</span></div>
-              <div className="db-info-row"><span className="db-info-key">Phone</span><span className="db-info-val">02890 000 111</span></div>
-              <div className="db-info-row"><span className="db-info-key">Hours</span><span className="db-info-val">Mon–Fri 9–5:30pm</span></div>
+              <div className="db-info-row"><span className="db-info-key">Address</span><span className="db-info-val">{clinic?.address ?? '—'}</span></div>
+              <div className="db-info-row"><span className="db-info-key">City</span><span className="db-info-val">{clinic?.city ?? '—'}</span></div>
+              <div className="db-info-row"><span className="db-info-key">Phone</span><span className="db-info-val">{clinic?.phone ?? '—'}</span></div>
+              <div className="db-info-row"><span className="db-info-key">Hours</span><span className="db-info-val">{clinic?.hours ?? '—'}</span></div>
               <div className="db-info-row"><span className="db-info-key">Avg booking</span><span className="db-info-val">£{clinic?.avg_booking_value ?? 135}</span></div>
             </div>
 
