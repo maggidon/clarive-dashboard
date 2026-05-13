@@ -78,6 +78,7 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
   const [callFilter, setCallFilter] = useState('all')
   const [selectedCall, setSelectedCall] = useState<any>(null)
   const [now] = useState(() => Date.now())
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const supabaseClient = createBrowserSupabaseClient()
 
@@ -149,7 +150,27 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
           <a className="db-nav-btn" href="/settings" style={{ textDecoration: 'none' }}>Settings</a>
           <button className="db-nav-btn logout" onClick={handleLogout}>Log out</button>
         </div>
+        <button className="db-hamburger db-nav-btn" onClick={() => setMenuOpen(o => !o)} aria-label="Menu">
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+            <rect width="16" height="1.5" rx="0.75" fill="currentColor"/>
+            <rect y="5.25" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+            <rect y="10.5" width="16" height="1.5" rx="0.75" fill="currentColor"/>
+          </svg>
+        </button>
       </nav>
+      {menuOpen && (
+        <>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 19 }} onClick={() => setMenuOpen(false)} />
+          <div className="db-mobile-menu">
+            <a className="db-mobile-menu-item" href="/" onClick={() => setMenuOpen(false)}>Overview</a>
+            <a className="db-mobile-menu-item" href="/calls" onClick={() => setMenuOpen(false)}>Calls</a>
+            <a className="db-mobile-menu-item" href="/recoveries" onClick={() => setMenuOpen(false)}>Recoveries</a>
+            <a className="db-mobile-menu-item" href="/reports" onClick={() => setMenuOpen(false)}>Reports</a>
+            <a className="db-mobile-menu-item" href="/settings" onClick={() => setMenuOpen(false)}>Settings</a>
+            <button className="db-mobile-menu-item" style={{ color: 'rgba(248,113,113,0.7)' }} onClick={() => { setMenuOpen(false); handleLogout() }}>Log out</button>
+          </div>
+        </>
+      )}
 
       <div className="db-subnav">
         <div className="db-page-title">Overview</div>
