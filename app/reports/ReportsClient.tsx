@@ -161,6 +161,7 @@ export default function ReportsClient({ calls, recoveries, clinic }: {
   return (
   <div className="db-root">
     <div className="page-bg"><div className="page-bg-mid" /></div>
+    <div className="page-texture" />
     <nav className="db-topnav">
         <div className="db-logo">
           <svg width="20" height="20" viewBox="0 0 69 69" fill="none">
