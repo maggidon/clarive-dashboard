@@ -63,12 +63,14 @@ export default function RecoveriesClient({ recoveries, calls, clinic }: {
   <div className="db-root">
     <div className="page-bg"><div className="page-bg-mid" /></div>
     <nav className="db-topnav">
-        <div className="db-logo">
-          <svg width="20" height="20" viewBox="0 0 69 69" fill="none">
-            <path d={SUBMARK} fill="#8942F0" />
-          </svg>
-          <span className="db-logo-text">CLARIVE AI</span>
-        </div>
+        <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="db-logo">
+            <svg width="20" height="20" viewBox="0 0 69 69" fill="none">
+              <path d={SUBMARK} fill="#8942F0" />
+            </svg>
+            <span className="db-logo-text">CLARIVE AI</span>
+          </div>
+        </a>
         <a className={`db-navlink ${pathname === '/' ? 'active' : ''}`} href="/">Overview</a>
         <a className={`db-navlink ${pathname === '/calls' ? 'active' : ''}`} href="/calls">Calls</a>
         <a className={`db-navlink ${pathname === '/recoveries' ? 'active' : ''}`} href="/recoveries">Recoveries</a>
