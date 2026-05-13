@@ -77,10 +77,14 @@ body {
   cursor: pointer;
   font-family: 'DM Sans', sans-serif;
   transition: all 0.15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 .db-nav-btn:hover { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); }
 .db-nav-btn.logout { color: rgba(248,113,113,0.7); border-color: rgba(248,113,113,0.2); }
 .db-nav-btn.logout:hover { background: rgba(248,113,113,0.08); }
+.db-nav-btn.active { color: #a855f7; border-color: rgba(168,85,247,0.3); }
 
 .db-subnav {
   padding: 14px 28px;
@@ -224,7 +228,7 @@ body {
 
 .db-call-body { min-width: 0; }
 .db-call-sum { font-size: 13px; color: rgba(255,255,255,0.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; font-weight: 400; }
-.db-call-met { font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+.db-call-met { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.4; }
 
 .sent-positive { color: #4ade80; }
 .sent-neutral { color: #94a3b8; }
@@ -346,6 +350,55 @@ body {
 .flag-yellow { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
 .flag-blue { background: rgba(96,165,250,0.1); color: #60a5fa; border: 1px solid rgba(96,165,250,0.2); }
 .flag-gray { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.08); }
+
+/* ─── PREMIUM BACKGROUND ORBS ─────────────────────────────────── */
+
+.page-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.page-bg::before {
+  content: '';
+  position: absolute;
+  top: -300px;
+  right: -200px;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.page-bg::after {
+  content: '';
+  position: absolute;
+  bottom: -250px;
+  left: -150px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(168,85,247,0.05) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.page-bg-mid {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(124,58,237,0.04) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.db-content-wrap {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
 /* ─── MOBILE RESPONSIVE ─────────────────────────────────────────── */
 
@@ -511,7 +564,12 @@ body {
 
 /* ─── REPORTS PAGE ─────────────────────────────────────────── */
 
-.rep-content { max-width: 100%s; }
+.rep-content {
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
 
 .rep-month-label {
   font-size: 13px;
@@ -665,6 +723,21 @@ body {
 .rep-attention-label { font-size: 13px; color: rgba(255,255,255,0.6); }
 .rep-attention-val { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
 
+.rep-narrative {
+  background: linear-gradient(135deg, #1a1525, #150f20);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 24px 28px;
+}
+
+.rep-narrative-para {
+  font-size: 14px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+.rep-narrative-para:last-child { margin-bottom: 0; }
+
 /* Print header/footer — hidden on screen */
 .print-header { display: none; }
 .print-footer { display: none; }
@@ -673,8 +746,8 @@ body {
 
 @media print {
   body { background: white; color: #0d0a14; }
-
   .no-print { display: none !important; }
+  .page-bg { display: none !important; }
 
   .print-header {
     display: flex;
@@ -717,41 +790,26 @@ body {
 
   .db-root { background: white; }
   .db-content { padding: 0; }
-  .rep-content { max-width: 100%; }
+  .rep-content { max-width: 100%; margin: 0; }
 
-  .rep-headline {
-    background: #f8f5ff;
-    border-color: #7c3aed;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .rep-headline-val {
-    -webkit-text-fill-color: #7c3aed;
-    color: #7c3aed;
-  }
+  .rep-headline { background: #f8f5ff; border-color: #7c3aed; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .rep-headline-val { -webkit-text-fill-color: #7c3aed; color: #7c3aed; }
   .rep-headline-label { color: #334155; }
   .rep-headline-sub { color: #64748b; }
 
-  .rep-kpi {
-    background: #f8fafc;
-    border-color: #e2e8f0;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
+  .rep-kpi { background: #f8fafc; border-color: #e2e8f0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .rep-kpi-val { color: #0d0a14; }
   .rep-kpi-label { color: #64748b; }
 
-  .rep-section {
-    background: #f8fafc;
-    border-color: #e2e8f0;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
+  .rep-section { background: #f8fafc; border-color: #e2e8f0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .rep-section-title { color: #64748b; }
   .rep-breakdown-label { color: #334155; }
   .rep-breakdown-count { color: #64748b; }
   .rep-attention-label { color: #334155; }
   .rep-month-label { color: #334155; }
+
+  .rep-narrative { background: #f8fafc; border-color: #e2e8f0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .rep-narrative-para { color: #334155; }
 }
 
 @media (max-width: 768px) {
@@ -761,34 +819,14 @@ body {
   .rep-headline { padding: 24px 20px; }
 }
 
-.rep-narrative {
-  background: linear-gradient(135deg, #1a1525, #150f20);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 14px;
-  padding: 24px 28px;
-}
-
-.rep-narrative-para {
-  font-size: 14px;
-  color: rgba(255,255,255,0.65);
-  line-height: 1.8;
-  margin-bottom: 14px;
-}
-.rep-narrative-para:last-child { margin-bottom: 0; }
-
-@media print {
-  .rep-narrative {
-    background: #f8fafc;
-    border-color: #e2e8f0;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .rep-narrative-para { color: #334155; }
-}
-
 /* ─── SETTINGS PAGE ─────────────────────────────────────────── */
 
-.set-content { max-width: 860px; margin: 0 auto; }
+.set-content {
+  max-width: 860px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
 
 .set-section {
   background: linear-gradient(135deg, #1a1525, #150f20);

@@ -128,6 +128,7 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
 
   return (
     <div className="db-root">
+  <div className="page-bg"><div className="page-bg-mid" /></div>
       <nav className="db-topnav">
         <div className="db-logo">
           <svg width="20" height="20" viewBox="0 0 69 69" fill="none">

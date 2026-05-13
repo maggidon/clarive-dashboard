@@ -129,7 +129,7 @@ export default function CallsClient({ calls, clinic }: { calls: any[], clinic: a
             <span className="db-live-dot" />
             {clinic?.name ?? 'Dashboard'}
           </div>
-          <button className="db-nav-btn">Settings</button>
+          <a className="db-nav-btn" href="/settings" style={{ textDecoration: 'none' }}>Settings</a>
           <button className="db-nav-btn logout" onClick={handleLogout}>Log out</button>
         </div>
       </nav>

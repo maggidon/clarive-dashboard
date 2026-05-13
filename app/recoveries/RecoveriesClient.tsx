@@ -59,8 +59,9 @@ export default function RecoveriesClient({ recoveries, calls, clinic }: {
     : 0
 
   return (
-    <div className="db-root">
-      <nav className="db-topnav">
+  <div className="db-root">
+    <div className="page-bg"><div className="page-bg-mid" /></div>
+    <nav className="db-topnav">
         <div className="db-logo">
           <svg width="20" height="20" viewBox="0 0 69 69" fill="none">
             <path d={SUBMARK} fill="#8942F0" />
