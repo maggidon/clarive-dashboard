@@ -181,7 +181,7 @@ body {
   border-radius: 6px;
   border: 1px solid rgba(255,255,255,0.07);
   background: transparent;
-  font-size: 11px;
+  font-size: 12px;
   color: rgba(255,255,255,0.35);
   cursor: pointer;
   font-family: 'DM Sans', sans-serif;
@@ -196,7 +196,7 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.03);
   display: grid;
   grid-template-columns: 32px 1fr auto;
-  gap: 12px;
+  gap: 13px;
   align-items: center;
   cursor: pointer;
   transition: background 0.12s;
@@ -507,4 +507,256 @@ body {
   .rec-stat { padding: 4px 12px; }
   .rec-stat-val { font-size: 16px; }
   .rec-stat-label { font-size: 10px; }
+}
+
+/* ─── REPORTS PAGE ─────────────────────────────────────────── */
+
+.rep-content { max-width: 900px; }
+
+.rep-month-label {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+  padding: 0 4px;
+}
+
+.rep-export-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-color: rgba(124,58,237,0.4);
+  color: #a855f7;
+}
+.rep-export-btn:hover { background: rgba(124,58,237,0.1); border-color: #7c3aed; color: #a855f7; }
+
+.rep-headline {
+  background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(168,85,247,0.08));
+  border: 1px solid rgba(124,58,237,0.25);
+  border-radius: 16px;
+  padding: 32px 36px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.rep-headline::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(168,85,247,0.5), transparent);
+}
+.rep-headline-val {
+  font-family: 'Sora', sans-serif;
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: -2px;
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.rep-headline-label {
+  font-size: 16px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 6px;
+}
+.rep-headline-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.35);
+}
+
+.rep-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.rep-kpi {
+  background: linear-gradient(135deg, #1a1525, #150f20);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rep-kpi-icon { display: flex; }
+.rep-kpi-val {
+  font-family: 'Sora', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #f8f7ff;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.rep-kpi-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.rep-section {
+  background: linear-gradient(135deg, #1a1525, #150f20);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 20px 24px;
+}
+.rep-section-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+.rep-chart { margin-top: 8px; }
+
+.rep-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.rep-breakdown-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.rep-breakdown-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  width: 80px;
+  flex-shrink: 0;
+}
+.rep-breakdown-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.rep-breakdown-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+.rep-breakdown-count {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  width: 24px;
+  text-align: right;
+}
+
+.rep-attention-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.rep-attention-row:last-child { border-bottom: none; }
+.rep-attention-label { font-size: 13px; color: rgba(255,255,255,0.6); }
+.rep-attention-val { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 700; }
+
+/* Print header/footer — hidden on screen */
+.print-header { display: none; }
+.print-footer { display: none; }
+
+/* ─── PRINT STYLES ─────────────────────────────────────────── */
+
+@media print {
+  body { background: white; color: #0d0a14; }
+
+  .no-print { display: none !important; }
+
+  .print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #7c3aed;
+    margin-bottom: 24px;
+  }
+  .print-header-logo {
+    font-family: 'Sora', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #7c3aed;
+  }
+  .print-header-clinic {
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0d0a14;
+    text-align: right;
+  }
+  .print-header-period {
+    font-size: 12px;
+    color: #64748b;
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  .print-footer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 24px;
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  .db-root { background: white; }
+  .db-content { padding: 0; }
+  .rep-content { max-width: 100%; }
+
+  .rep-headline {
+    background: #f8f5ff;
+    border-color: #7c3aed;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .rep-headline-val {
+    -webkit-text-fill-color: #7c3aed;
+    color: #7c3aed;
+  }
+  .rep-headline-label { color: #334155; }
+  .rep-headline-sub { color: #64748b; }
+
+  .rep-kpi {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .rep-kpi-val { color: #0d0a14; }
+  .rep-kpi-label { color: #64748b; }
+
+  .rep-section {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .rep-section-title { color: #64748b; }
+  .rep-breakdown-label { color: #334155; }
+  .rep-breakdown-count { color: #64748b; }
+  .rep-attention-label { color: #334155; }
+  .rep-month-label { color: #334155; }
+}
+
+@media (max-width: 768px) {
+  .rep-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .rep-two-col { grid-template-columns: 1fr; }
+  .rep-headline-val { font-size: 36px; }
+  .rep-headline { padding: 24px 20px; }
 }
