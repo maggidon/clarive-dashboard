@@ -962,6 +962,40 @@ body {
 .set-input::placeholder { color: rgba(255,255,255,0.2); }
 .set-input:hover { border-color: rgba(255,255,255,0.15); }
 
+.set-textarea {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 11px 14px;
+  color: #f8f7ff;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.6;
+}
+.set-textarea:focus {
+  border-color: rgba(124,58,237,0.5);
+  background: rgba(124,58,237,0.05);
+}
+.set-textarea::placeholder { color: rgba(255,255,255,0.2); }
+.set-textarea:hover { border-color: rgba(255,255,255,0.15); }
+
+.set-voice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.set-booking-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
 .set-hint {
   font-size: 12px;
   color: rgba(255,255,255,0.25);
@@ -1018,4 +1052,6 @@ body {
   .set-section { padding: 20px 18px; gap: 18px; }
   .set-grid { grid-template-columns: 1fr; }
   .set-section-head { gap: 12px; }
+  .set-voice-grid { grid-template-columns: 1fr; }
+  .set-booking-grid { grid-template-columns: 1fr; }
 }
