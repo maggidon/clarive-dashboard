@@ -29,7 +29,13 @@ export default async function Page() {
   const { data: { user } } = await authClient.auth.getUser()
   if (!user) redirect('/login')
 
-  const clinicId = 'pinehurst_dental'
+  const { data: clinicUser } = await authClient
+    .from('clinic_users')
+    .select('clinic_id')
+    .eq('user_id', user.id)
+    .single()
+
+  const clinicId = clinicUser?.clinic_id ?? 'pinehurst_dental'
 
   const { data: calls } = await supabase
     .from('calls')

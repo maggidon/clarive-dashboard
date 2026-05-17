@@ -27,10 +27,18 @@ export default async function SettingsPage() {
   const { data: { user } } = await authClient.auth.getUser()
   if (!user) redirect('/login')
 
+  const { data: clinicUser } = await authClient
+    .from('clinic_users')
+    .select('clinic_id')
+    .eq('user_id', user.id)
+    .single()
+
+  const clinicId = clinicUser?.clinic_id ?? 'pinehurst_dental'
+
   const { data: clinic } = await supabase
     .from('clinics')
     .select('*')
-    .eq('id', 'pinehurst_dental')
+    .eq('id', clinicId)
     .single()
 
   return <SettingsClient clinic={clinic} />
