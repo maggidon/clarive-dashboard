@@ -8,7 +8,7 @@ const VOICES = [
   { id: 'clara', name: 'Clara', accent: 'Warm & Natural • Female', description: 'Warm, clear and natural — the default Clarive AI voice' },
   { id: 'willa', name: 'Willa', accent: 'Calm & Polished • Female', description: 'Calm, polished and reassuring' },
   { id: 'liam', name: 'Liam', accent: 'Confident & Friendly • Male', description: 'Confident, friendly and approachable' },
-  { id: 'niall', name: 'Niall', accent: 'Warm & Conversational • Male', description: 'Warm, natural Northern Irish tone' },
+  { id: 'niall', name: 'Niall', accent: 'Warm & Conversational • Male', description: 'Warm, natural and conversational' },
 ]
 
 const TONES = [
