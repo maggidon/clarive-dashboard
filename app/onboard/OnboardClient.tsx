@@ -5,10 +5,10 @@ import { useState, useRef } from 'react'
 const SUBMARK = `M34.4958 0.0112218H34.4509C15.3486 0.0112218 0 15.6376 0 34.406C0 35.0092 0.0224436 35.6067 0.0589144 36.2071C6.56755 33.4999 11.7127 32.4282 17.9941 31.5304L18.0671 31.6062C12.8714 35.0288 6.27579 41.4449 3.31043 49.9482C5.95036 54.8072 9.05599 58.5385 13.0594 61.5459C13.8814 45.8915 26.6293 30.1249 45.2659 26.7303L45.2379 26.6125H3.54889C8.43598 18.3196 16.4343 12.4169 27.5804 12.4169C41.5515 12.4169 52.7508 23.7874 52.7508 37.997C52.7508 51.8391 40.968 65.179 25.2462 64.9938C21.7198 64.9489 19.1332 64.5478 15.4019 63.2011C21.097 67.2831 26.8089 68.9579 33.8758 68.9579C52.4787 68.9579 69 53.7075 69 34.2826C69 15.5282 53.3119 0 34.521 0L34.4958 0.0112218Z`
 
 const VOICES = [
-  { id: 'clara', name: 'Clara', accent: 'British · Female', description: 'Warm, clear and natural — the default Clarive AI voice' },
-  { id: 'willa', name: 'Willa', accent: 'British · Female', description: 'Calm, polished and reassuring' },
-  { id: 'liam', name: 'Liam', accent: 'British · Male', description: 'Confident, friendly and approachable' },
-  { id: 'niall', name: 'Niall', accent: 'Northern Irish · Male', description: 'Warm, natural Northern Irish tone' },
+  { id: 'clara', name: 'Clara', accent: 'Warm & Natural • Female', description: 'Warm, clear and natural — the default Clarive AI voice' },
+  { id: 'willa', name: 'Willa', accent: 'Calm & Polished • Female', description: 'Calm, polished and reassuring' },
+  { id: 'liam', name: 'Liam', accent: 'Confident & Friendly • Male', description: 'Confident, friendly and approachable' },
+  { id: 'niall', name: 'Niall', accent: 'Warm & Conversational • Male', description: 'Warm, natural Northern Irish tone' },
 ]
 
 const TONES = [

@@ -10,10 +10,10 @@ const SUBMARK = `M34.4958 0.0112218H34.4509C15.3486 0.0112218 0 15.6376 0 34.406
 const FORMSPREE_ID = 'xbdzwkqq'
 
 const VOICES = [
-  { id: 'clara', name: 'Clara', accent: 'British · Female' },
-  { id: 'willa', name: 'Willa', accent: 'British · Female' },
-  { id: 'liam', name: 'Liam', accent: 'British · Male' },
-  { id: 'niall', name: 'Niall', accent: 'Northern Irish · Male' },
+  { id: 'clara', name: 'Clara', accent: 'Warm & Natural • Female' },
+  { id: 'willa', name: 'Willa', accent: 'Calm & Polished • Female' },
+  { id: 'liam', name: 'Liam', accent: 'Confident & Friendly • Male' },
+  { id: 'niall', name: 'Niall', accent: 'Warm & Conversational • Male' },
 ]
 
 const TONES = [
