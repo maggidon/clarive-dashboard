@@ -103,29 +103,15 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
   const bookedCalls = calls.filter(c => c.appointment_booked_ai === true).length
   const estimatedRevenue = bookedCalls * (clinic?.avg_booking_value ?? 135)
 
-  const barCounts = [0,1,2,3,4,5,6].map(i => {
-    const dayStart = new Date(now - (6-i)*86400000)
-    dayStart.setHours(0,0,0,0)
-    const dayEnd = new Date(dayStart.getTime() + 86400000)
-    return calls.filter(c => {
-      const t = c.started_at ?? new Date(c.created_at).getTime()
-      return t >= dayStart.getTime() && t < dayEnd.getTime() && c.direction !== 'outbound'
-    }).length
+  const dateFilteredCalls = calls.filter(c => {
+    const ts = c.started_at ?? (c.created_at ? new Date(c.created_at).getTime() : 0)
+    return dateFilter === 'All time' || ts >= dateCutoff
   })
-  const maxBar = Math.max(...barCounts, 1)
-  const dayLabels = ['M','T','W','T','F','S','S']
-  const today = new Date().getDay()
-  const todayIdx = today === 0 ? 6 : today - 1
-
-  const breakdown = [
-    { label: 'Resolved', color: '#4ade80', count: calls.filter(c => classifyCall(c).filter === 'resolved').length },
-    { label: 'FAQ', color: '#60a5fa', count: calls.filter(c => classifyCall(c).filter === 'faq').length },
-    { label: 'Emergency', color: '#f87171', count: calls.filter(c => classifyCall(c).filter === 'emergency').length },
-    { label: 'Booked', color: '#a855f7', count: calls.filter(c => classifyCall(c).filter === 'booked').length },
-    { label: 'Missed', color: '#fbbf24', count: calls.filter(c => classifyCall(c).filter === 'missed').length },
-    { label: 'Recovery', color: '#22d3ee', count: calls.filter(c => classifyCall(c).filter === 'recovery').length },
-  ].filter(b => b.count > 0)
-  const maxBreakdown = Math.max(...breakdown.map(b => b.count), 1)
+  const sidebarBooked = dateFilteredCalls.filter(c => c.appointment_booked_ai === true).length
+  const sidebarRevenue = sidebarBooked * (clinic?.avg_booking_value ?? 135)
+  const sidebarRecovered = dateFilteredCalls.filter(c => c.direction === 'outbound').length
+  const sidebarHighValue = dateFilteredCalls.filter(c => c.high_value_lead_ai === true).length
+  const sidebarMissed = dateFilteredCalls.filter(c => c.call_successful === false && c.direction === 'inbound').length
 
   return (
     <div className="db-root">
@@ -257,45 +243,43 @@ export default function Dashboard({ calls, clinic }: { calls: any[], clinic: any
           </div>
 
           <div className="db-right">
-            <div className="db-card">
-              <div className="db-card-title">Clinic Details</div>
-              <div className="db-info-row"><span className="db-info-key">Practice</span><span className="db-info-val">{clinic?.name}</span></div>
-              <div className="db-info-row"><span className="db-info-key">Address</span><span className="db-info-val">{clinic?.address ?? '—'}</span></div>
-              <div className="db-info-row"><span className="db-info-key">City</span><span className="db-info-val">{clinic?.city ?? '—'}</span></div>
-              <div className="db-info-row"><span className="db-info-key">Phone</span><span className="db-info-val">{clinic?.phone ?? '—'}</span></div>
-              <div className="db-info-row"><span className="db-info-key">Hours</span><span className="db-info-val">{clinic?.hours ?? '—'}</span></div>
-              <div className="db-info-row"><span className="db-info-key">Avg booking</span><span className="db-info-val">£{clinic?.avg_booking_value ?? 135}</span></div>
-            </div>
-
-            <div className="db-card">
-              <div className="db-card-title">Call Volume — 7 Days</div>
-              <div className="db-bars">
-                {barCounts.map((count, i) => (
-                  <div key={i} className="db-bar-wrap">
-                    <div
-                      className={`db-bar ${i === todayIdx ? 'today' : ''}`}
-                      style={{ height: `${Math.max(Math.round((count / maxBar) * 52), count > 0 ? 4 : 0)}px` }}
-                    />
-                    <div className={`db-bar-label ${i === todayIdx ? 'today-label' : ''}`}>{dayLabels[i]}</div>
-                  </div>
-                ))}
+            <div className="db-revenue-hero">
+              <div className="db-card-title">Revenue captured</div>
+              <div className="db-hero-val">£{sidebarRevenue.toLocaleString()}</div>
+              <div className="db-hero-sub">{sidebarBooked} appointments × £{clinic?.avg_booking_value ?? 135} avg</div>
+              <div className="db-hero-stats">
+                <div className="db-hero-stat">
+                  <div className="db-hero-stat-val">{sidebarBooked}</div>
+                  <div className="db-hero-stat-label">Booked</div>
+                </div>
+                <div className="db-hero-stat">
+                  <div className="db-hero-stat-val">{sidebarRecovered}</div>
+                  <div className="db-hero-stat-label">Recovered</div>
+                </div>
+                <div className="db-hero-stat">
+                  <div className="db-hero-stat-val">{sidebarHighValue}</div>
+                  <div className="db-hero-stat-label">High Value</div>
+                </div>
               </div>
             </div>
 
-            <div className="db-card">
-              <div className="db-card-title">Call Breakdown</div>
-              {breakdown.length === 0 ? (
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>No data yet</div>
-              ) : breakdown.map(b => (
-                <div key={b.label} className="db-bd-row">
-                  <div className="db-bd-dot" style={{ background: b.color }} />
-                  <div className="db-bd-name">{b.label}</div>
-                  <div className="db-bd-bar">
-                    <div className="db-bd-fill" style={{ width: `${Math.round(b.count/maxBreakdown*100)}%`, background: b.color }} />
-                  </div>
-                  <div className="db-bd-count">{b.count}</div>
-                </div>
-              ))}
+            <div className="db-mini-grid">
+              <div className="db-mini-card">
+                <div className="db-card-title">Missed Calls</div>
+                <div className="db-mini-val red">{sidebarMissed}</div>
+                <div className="db-mini-sub">Unanswered inbound</div>
+              </div>
+              <div className="db-mini-card">
+                <div className="db-card-title">Recovery Attempts</div>
+                <div className="db-mini-val cyan">{sidebarRecovered}</div>
+                <div className="db-mini-sub">Outbound calls made</div>
+              </div>
+            </div>
+
+            <div className="db-hv-card">
+              <div className="db-card-title">High Value Leads</div>
+              <div className="db-mini-val purple">{sidebarHighValue}</div>
+              <div className="db-mini-sub">flagged this week</div>
             </div>
           </div>
         </div>
